@@ -19,7 +19,7 @@ impl Connection for RemiTcpConnection {
     type Id = net::SocketAddr;
 
     fn id(&self) -> Option<Self::Id> {
-        self.stream.peer_addr().ok()
+        Some(self.address)
     }
 
     async fn close(mut self) -> RemiResult<()> {
