@@ -1,6 +1,6 @@
-use crate::error::RemiResult;
+use tokio::io::{AsyncRead, AsyncWrite};
 
-use super::frame::Frame;
+use crate::error::RemiResult;
 
 #[derive(Debug, Clone)]
 pub enum ConnectionState {
@@ -8,11 +8,9 @@ pub enum ConnectionState {
     Open,
 }
 
-/// A trait to represent a transport connection
 #[crate::async_trait]
 pub trait Connection: Sync {
     type Id: Clone + PartialEq + Eq + std::hash::Hash;
-    type Frame: Frame;
 
     /// Returns the id of this connection.
     fn id(&self) -> Self::Id;
@@ -20,12 +18,22 @@ pub trait Connection: Sync {
     /// Returns the state of this connection.
     fn state(&self) -> ConnectionState;
 
+    /// Closes the connection.
+    async fn close(&self) -> RemiResult<()>;
+}
+
+/// A trait to represent a transport connection
+#[crate::async_trait]
+pub trait FramedConnection: Connection {
+    type Frame: Send + Sync;
+
     /// Sends a frame through the connection.
     async fn send(&self, frame: Self::Frame) -> RemiResult<()>;
 
     /// Receives a frame from the connection.
     async fn next(&self) -> RemiResult<Self::Frame>;
-
-    /// Closes the connection.
-    async fn close(&self) -> RemiResult<()>;
 }
+
+/// A trait to represent a transport connection
+#[crate::async_trait]
+pub trait StreamConnection: Connection + AsyncRead + AsyncWrite {}
