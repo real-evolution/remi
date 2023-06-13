@@ -2,12 +2,6 @@ use tokio::io::{AsyncRead, AsyncWrite};
 
 use crate::error::RemiResult;
 
-#[derive(Debug, Clone)]
-pub enum ConnectionState {
-    Closed,
-    Open,
-}
-
 #[crate::async_trait]
 pub trait Connection: Sync {
     type Id: Clone + PartialEq + Eq + std::hash::Hash;
@@ -15,8 +9,6 @@ pub trait Connection: Sync {
     /// Returns the id of this connection.
     fn id(&self) -> Self::Id;
 
-    /// Returns the state of this connection.
-    fn state(&self) -> ConnectionState;
 
     /// Closes the connection.
     async fn close(&self) -> RemiResult<()>;
