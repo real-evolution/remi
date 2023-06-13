@@ -10,7 +10,7 @@ pub trait Connection: Sync {
     fn id(&self) -> Option<Self::Id>;
 
     /// Closes the connection.
-    async fn close(&self) -> RemiResult<()>;
+    async fn close(self) -> RemiResult<()>;
 }
 
 /// A trait to represent a transport connection
