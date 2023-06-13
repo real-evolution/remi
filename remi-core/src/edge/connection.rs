@@ -7,8 +7,7 @@ pub trait Connection: Sync {
     type Id: Clone + PartialEq + Eq + std::hash::Hash;
 
     /// Returns the id of this connection.
-    fn id(&self) -> Self::Id;
-
+    fn id(&self) -> Option<Self::Id>;
 
     /// Closes the connection.
     async fn close(&self) -> RemiResult<()>;
