@@ -160,6 +160,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "remi"
+version = "0.1.0"
+dependencies = [
+ "remi-core",
+]
+
+[[package]]
 name = "remi-core"
 version = "0.1.0"
 dependencies = [
@@ -173,6 +180,7 @@ name = "remi-tcp"
 version = "0.1.0"
 dependencies = [
  "pin-project",
+ "remi",
  "remi-core",
  "tokio",
 ]
