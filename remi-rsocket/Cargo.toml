@@ -1,0 +1,13 @@
+[package]
+name = "remi-rsocket"
+version = "0.1.0"
+description = "`remi` framwrok rsocket proto layer"
+keywords = ["rpc", "net", "microservice", "interconnect"]
+edition.workspace = true
+authors.workspace = true
+readme.workspace = true
+publish.workspace = true
+repository.workspace = true
+license-file.workspace = true
+
+[dependencies]
