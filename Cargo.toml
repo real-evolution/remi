@@ -8,5 +8,3 @@ repository = "https://github.com/real-evolution/remi"
 license-file = "LICENSE"
 readme = true
 publish = true
-
-[workspace.dependencies]

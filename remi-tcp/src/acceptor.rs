@@ -18,7 +18,7 @@ impl RemiTcpAcceptor {
     }
 }
 
-#[remi_core::async_trait]
+#[remi::async_trait]
 impl Acceptor<RemiTcpConnection> for RemiTcpAcceptor {
     #[inline(always)]
     async fn next(&self) -> RemiResult<RemiTcpConnection> {

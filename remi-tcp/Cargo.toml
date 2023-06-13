@@ -12,6 +12,7 @@ license-file.workspace = true
 
 [dependencies]
 # project dependencies
+remi = { path = "../remi" }
 remi-core = { path = "../remi-core" }
 
 # crate dependencies

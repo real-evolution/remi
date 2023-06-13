@@ -14,7 +14,7 @@ pub struct RemiTcpConnection {
     address: net::SocketAddr,
 }
 
-#[remi_core::async_trait]
+#[remi::async_trait]
 impl Connection for RemiTcpConnection {
     type Id = net::SocketAddr;
 
