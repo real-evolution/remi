@@ -11,4 +11,9 @@ repository.workspace = true
 license-file.workspace = true
 
 [dependencies]
+# project dependencies
+remi-core = { path = "../remi-core" }
+
+# crate dependencies
+pin-project = {version = "1"}
 tokio = { version = "1", features = ["full"] }
