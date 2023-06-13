@@ -1,0 +1,14 @@
+[package]
+name = "remi-tcp"
+version = "0.1.0"
+description = "`remi` framwrok TCP transport layer"
+keywords = ["rpc", "net", "microservice", "interconnect"]
+edition.workspace = true
+authors.workspace = true
+readme.workspace = true
+publish.workspace = true
+repository.workspace = true
+license-file.workspace = true
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }

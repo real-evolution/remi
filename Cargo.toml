@@ -1,5 +1,5 @@
 [workspace]
-members = ["remi-core"]
+members = ["remi-core", "remi-tcp"]
 
 [workspace.package]
 edition = "2021"
