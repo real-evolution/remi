@@ -14,3 +14,9 @@ license-file.workspace = true
 # project dependencies
 remi-core = { path = "../remi-core" }
 remi = { path = "../remi" }
+
+# crate dependencies
+bytes = { version = "1" }
+futures = { version = "0" }
+rsocket_rust = { version = "0", features = ["frame"] }
+tokio-util = { version = "0", features = ["codec"] }
