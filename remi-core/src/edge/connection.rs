@@ -6,9 +6,10 @@ use crate::error::RemiResult;
 /// a [`FramedConnection<F>`].
 pub trait Frame: Send + Sync + Unpin {}
 
+/// A trait to represent a transport connection.
 #[crate::async_trait]
-pub trait Connection: Sync {
-    type Id: Clone + PartialEq + Eq + std::hash::Hash;
+pub trait Connection: Send + Sync {
+    type Id: Send + Sync + Clone + PartialEq + Eq + std::hash::Hash;
 
     /// Returns the id of this connection.
     fn id(&self) -> Option<Self::Id>;
