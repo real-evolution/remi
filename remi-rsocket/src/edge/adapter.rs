@@ -5,7 +5,7 @@ use remi_core::{
 };
 use tokio_util::codec::Framed;
 
-use super::{frame::RSocketFrame, RSocketStreamFrameCodec};
+use super::codec::{frame::RSocketFrame, RSocketStreamFrameCodec};
 
 pub struct RSocketStreamAdapter<C> {
     inner: Framed<C, RSocketStreamFrameCodec>,

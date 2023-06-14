@@ -1,5 +1,4 @@
-mod frame;
-mod adapter;
+pub(super) mod frame;
 
 use bytes::BytesMut;
 use remi_core::error::RemiError;
