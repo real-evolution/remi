@@ -1,43 +1,83 @@
-use std::{io, net};
+use remi_core::{
+    edge::{Acceptor, AcceptorState},
+    error::RemiError,
+};
 
-use remi_core::{edge::Acceptor, error::RemiResult};
+use std::{io, net, pin, task};
 use tokio::net::{TcpListener, ToSocketAddrs};
 
 use crate::connection::RemiTcpConnection;
 
 #[derive(Debug)]
 pub struct RemiTcpAcceptor {
-    inner: TcpListener,
+    listener: Option<TcpListener>,
+    address: net::SocketAddr,
 }
 
 impl RemiTcpAcceptor {
+    pub fn new(address: net::SocketAddr) -> Self {
+        Self {
+            listener: None,
+            address,
+        }
+    }
+
     pub async fn bind<A: ToSocketAddrs>(addr: A) -> io::Result<Self> {
-        let inner = TcpListener::bind(addr).await?;
+        let listener = TcpListener::bind(addr).await?;
+        let address = listener.local_addr()?;
 
-        Ok(Self { inner })
-    }
-}
-
-#[remi::async_trait]
-impl Acceptor<RemiTcpConnection> for RemiTcpAcceptor {
-    #[inline(always)]
-    async fn next(&self) -> RemiResult<RemiTcpConnection> {
-        Ok(self.inner.accept().await?.into())
-    }
-}
-
-impl From<TcpListener> for RemiTcpAcceptor {
-    fn from(inner: TcpListener) -> Self {
-        Self { inner }
-    }
-}
-
-impl TryFrom<net::TcpListener> for RemiTcpAcceptor {
-    type Error = io::Error;
-
-    fn try_from(inner: net::TcpListener) -> io::Result<Self> {
         Ok(Self {
-            inner: TcpListener::from_std(inner)?,
+            listener: Some(listener),
+            address,
         })
+    }
+
+    pub async fn start(&mut self) -> io::Result<()> {
+        if self.listener.is_some() {
+            return Ok(());
+        };
+
+        self.listener = Some(TcpListener::bind(self.address).await?);
+
+        Ok(())
+    }
+}
+
+impl Acceptor for RemiTcpAcceptor {
+    type Conn = RemiTcpConnection;
+    type Error = RemiError;
+
+    // Required method
+    fn poll_accept(
+        mut self: pin::Pin<&mut Self>,
+        cx: &mut task::Context<'_>,
+    ) -> task::Poll<Option<Result<Self::Conn, Self::Error>>> {
+        let Some(ref listener) = self.listener else {
+            return task::Poll::Ready(None);
+        };
+
+        let task::Poll::Ready(item) = listener.poll_accept(cx) else {
+            return task::Poll::Pending;
+        };
+
+        let item = match item {
+            | Ok(item) => Ok(item.into()),
+            | Err(e) => {
+                self.listener = None;
+
+                Err(e.into())
+            }
+        };
+
+        task::Poll::Ready(Some(item))
+    }
+
+    #[inline(always)]
+    fn state(&self) -> AcceptorState {
+        if self.listener.is_some() {
+            AcceptorState::Running
+        } else {
+            AcceptorState::Stopped
+        }
     }
 }
