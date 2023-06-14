@@ -2,4 +2,4 @@ mod acceptor;
 mod connection;
 
 pub use acceptor::Acceptor;
-pub use connection::Connection;
+pub use connection::{Connection, Frame, FramedConnection, StreamConnection};

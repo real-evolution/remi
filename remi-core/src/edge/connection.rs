@@ -28,6 +28,6 @@ pub trait FramedConnection<F: Frame>: Connection {
     async fn next(&mut self) -> Option<RemiResult<F>>;
 }
 
-/// A trait to represent a transport connection
+/// A trait to represent a stream-based transport connection.
 #[crate::async_trait]
 pub trait StreamConnection: Connection + AsyncRead + AsyncWrite {}
