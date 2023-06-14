@@ -7,7 +7,7 @@ use tokio::{
 };
 
 #[derive(Debug)]
-#[pin_project::pin_project()]
+#[pin_project::pin_project]
 pub struct RemiTcpConnection {
     #[pin]
     stream: TcpStream,
