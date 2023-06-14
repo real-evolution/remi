@@ -7,5 +7,3 @@ impl From<rsocket_rust::frame::Frame> for RSocketFrame {
         Self(input)
     }
 }
-
-impl remi_core::edge::Frame for RSocketFrame {}

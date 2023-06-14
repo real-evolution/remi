@@ -1,11 +1,12 @@
-use futures::{SinkExt, StreamExt};
 use remi_core::{
     edge::{Connection, FramedConnection, StreamConnection},
     error::RemiResult,
 };
+
+use futures::{SinkExt, StreamExt};
 use tokio_util::codec::Framed;
 
-use super::codec::{frame::RSocketFrame, RSocketStreamFrameCodec};
+use super::{codec::RSocketStreamFrameCodec, frame::RSocketFrame};
 
 pub struct RSocketStreamAdapter<C> {
     inner: Framed<C, RSocketStreamFrameCodec>,
@@ -30,10 +31,12 @@ where
 }
 
 #[remi::async_trait]
-impl<C> FramedConnection<RSocketFrame> for RSocketStreamAdapter<C>
+impl<C> FramedConnection for RSocketStreamAdapter<C>
 where
     C: StreamConnection + Unpin,
 {
+    type Frame = RSocketFrame;
+
     #[inline(always)]
     async fn send(&mut self, frame: RSocketFrame) -> RemiResult<()> {
         Ok(self.inner.send(frame).await?)

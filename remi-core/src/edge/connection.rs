@@ -2,10 +2,6 @@ use tokio::io::{AsyncRead, AsyncWrite};
 
 use crate::error::RemiResult;
 
-/// A trait to represent a frame that can be sent/read from
-/// a [`FramedConnection<F>`].
-pub trait Frame: Send + Sync + Unpin {}
-
 /// A trait to represent a transport connection.
 #[crate::async_trait]
 pub trait Connection: Send + Sync {
@@ -20,12 +16,14 @@ pub trait Connection: Send + Sync {
 
 /// A trait to represent a frame-based transport connection.
 #[crate::async_trait]
-pub trait FramedConnection<F: Frame>: Connection {
+pub trait FramedConnection: Connection {
+    type Frame: Send + Sync + Unpin;
+
     /// Sends a frame through the connection.
-    async fn send(&mut self, frame: F) -> RemiResult<()>;
+    async fn send(&mut self, frame: Self::Frame) -> RemiResult<()>;
 
     /// Receives a frame from the connection.
-    async fn next(&mut self) -> Option<RemiResult<F>>;
+    async fn next(&mut self) -> Option<RemiResult<Self::Frame>>;
 }
 
 /// A trait to represent a stream-based transport connection.

@@ -1,9 +1,10 @@
-pub(super) mod frame;
+use remi_core::error::RemiError;
 
 use bytes::BytesMut;
-use remi_core::error::RemiError;
 use rsocket_rust::utils::{u24, Writeable};
 use tokio_util::codec::{Decoder, Encoder, LengthDelimitedCodec};
+
+use super::frame::RSocketFrame;
 
 pub const RSOCKET_LEN_SIZE: usize = 3;
 
@@ -30,13 +31,13 @@ impl Default for RSocketStreamFrameCodec {
 }
 
 impl Decoder for RSocketStreamFrameCodec {
-    type Item = frame::RSocketFrame;
+    type Item = super::frame::RSocketFrame;
     type Error = RemiError;
 
     fn decode(
         &mut self,
         src: &mut BytesMut,
-    ) -> Result<Option<frame::RSocketFrame>, Self::Error> {
+    ) -> Result<Option<RSocketFrame>, Self::Error> {
         let Some(mut buf) = self.0.decode(src)? else {
             return Ok(None);
         };
@@ -47,12 +48,12 @@ impl Decoder for RSocketStreamFrameCodec {
     }
 }
 
-impl Encoder<frame::RSocketFrame> for RSocketStreamFrameCodec {
+impl Encoder<RSocketFrame> for RSocketStreamFrameCodec {
     type Error = RemiError;
 
     fn encode(
         &mut self,
-        item: frame::RSocketFrame,
+        item: RSocketFrame,
         dst: &mut BytesMut,
     ) -> Result<(), Self::Error> {
         dst.reserve(RSOCKET_LEN_SIZE + item.0.len());
