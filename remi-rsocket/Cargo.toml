@@ -11,3 +11,6 @@ repository.workspace = true
 license-file.workspace = true
 
 [dependencies]
+# project dependencies
+remi-core = { path = "../remi-core" }
+remi = { path = "../remi" }
