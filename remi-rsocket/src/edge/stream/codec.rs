@@ -6,7 +6,7 @@ use tokio_util::codec::{Decoder, Encoder, LengthDelimitedCodec};
 
 use super::frame::RSocketFrame;
 
-pub const RSOCKET_LEN_SIZE: usize = 3;
+const RSOCKET_LEN_SIZE: usize = 3;
 
 #[derive(Debug, Clone)]
 #[repr(transparent)]
