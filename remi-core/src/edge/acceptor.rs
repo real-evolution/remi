@@ -22,7 +22,7 @@ pub trait Acceptor: Unpin + Send {
     fn poll_accept(
         self: Pin<&mut Self>,
         cx: &mut Context<'_>,
-    ) -> Poll<Option<Result<Self::Conn, Self::Error>>>;
+    ) -> Poll<Result<Self::Conn, Self::Error>>;
 
     /// Gets the current state of the acceptor.
     fn state(&self) -> AcceptorState;
