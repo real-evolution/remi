@@ -14,7 +14,7 @@ pub enum AcceptorState {
 }
 
 /// A trait to represent a connection acceptor.
-pub trait Acceptor {
+pub trait Acceptor: Unpin + Send {
     type Conn: Connection;
     type Error;
 
