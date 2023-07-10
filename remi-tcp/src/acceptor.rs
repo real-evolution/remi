@@ -46,17 +46,15 @@ impl Acceptor for RemiTcpAcceptor {
     type Conn = RemiTcpConnection;
     type Error = RemiError;
 
-    // Required method
     fn poll_accept(
         &mut self,
         cx: &mut task::Context<'_>,
     ) -> task::Poll<Result<Self::Conn, Self::Error>> {
         let Some(ref listener) = self.listener else {
-            return task::Poll::Ready(Err(io::Error::new(
+            return Err(io::Error::new(
                 ErrorKind::NotConnected,
                 "listener not started",
-            )
-            .into()));
+            ))?;
         };
 
         let task::Poll::Ready(item) = listener.poll_accept(cx) else {
@@ -68,11 +66,11 @@ impl Acceptor for RemiTcpAcceptor {
             | Err(e) => {
                 self.listener = None;
 
-                return task::Poll::Ready(Err(e.into()));
+                return Err(e)?;
             }
         };
 
-        task::Poll::Ready(Ok(item))
+        Ok(item).into()
     }
 
     #[inline(always)]

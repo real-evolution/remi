@@ -57,6 +57,23 @@ impl AsyncWrite for RemiTcpConnection {
     ) -> task::Poll<io::Result<()>> {
         self.project().stream.poll_shutdown(cx)
     }
+
+    fn poll_write_vectored(
+        self: pin::Pin<&mut Self>,
+        cx: &mut task::Context<'_>,
+        bufs: &[io::IoSlice<'_>],
+    ) -> task::Poll<Result<usize, io::Error>> {
+        let buf = bufs
+            .iter()
+            .find(|b| !b.is_empty())
+            .map_or(&[][..], |b| &**b);
+        self.poll_write(cx, buf)
+    }
+
+    #[inline]
+    fn is_write_vectored(&self) -> bool {
+        self.stream.is_write_vectored()
+    }
 }
 
 impl From<(TcpStream, net::SocketAddr)> for RemiTcpConnection {
