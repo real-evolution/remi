@@ -1,11 +1,11 @@
 use thiserror::Error;
 
 /// A type alias for results returned by remi.
-pub type RemiResult<T> = Result<T, RemiError>;
+pub type Result<T> = std::result::Result<T, Error>;
 
 /// A type to rerpesent errors returned by remi.
 #[derive(Error, Debug)]
-pub enum RemiError {
+pub enum Error {
     /// An unknown error occurred.
     #[error("unknown error: {0}")]
     Unknown(#[from] Box<dyn std::error::Error + Send + Sync>),
