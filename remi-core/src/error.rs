@@ -8,7 +8,7 @@ pub type RemiResult<T> = Result<T, RemiError>;
 pub enum RemiError {
     /// An unknown error occurred.
     #[error("unknown error: {0}")]
-    Unknown(#[from] anyhow::Error),
+    Unknown(#[from] Box<dyn std::error::Error + Send + Sync>),
 
     /// An error returned by the underlying transport.
     #[error("i/o error: {0}")]
