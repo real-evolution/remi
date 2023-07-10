@@ -62,21 +62,3 @@ impl<C, A> super::Addressable for Accepted<C, A> {
         &self.addr
     }
 }
-
-#[crate::async_trait]
-impl<C, A> super::Connection for Accepted<C, A>
-where
-    C: super::Connection + Send,
-    A: Send,
-{
-    type Error = C::Error;
-    type Frame = C::Frame;
-
-    async fn send(&mut self, frame: Self::Frame) -> Result<(), Self::Error> {
-        self.conn.send(frame).await
-    }
-
-    async fn next(&mut self) -> Option<Result<Self::Frame, Self::Error>> {
-        self.conn.next().await
-    }
-}

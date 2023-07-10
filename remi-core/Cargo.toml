@@ -11,6 +11,5 @@ repository.workspace = true
 license-file.workspace = true
 
 [dependencies]
-async-trait = { version = "0" }
+futures = { version = "0" }
 thiserror = { version = "1" }
-tokio = { version = "1", features = ["full"] }
