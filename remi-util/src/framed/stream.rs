@@ -20,7 +20,6 @@ impl<Conn, Codec> FramedStreamConnection<Conn, Codec> {
     }
 }
 
-#[remi_core::async_trait]
 impl<Conn, Codec> Connection for FramedStreamConnection<Conn, Codec>
 where
     Conn: Connection,
@@ -32,17 +31,12 @@ where
     fn id(&self) -> Option<Self::Id> {
         self.inner.get_ref().id()
     }
-
-    #[inline(always)]
-    async fn close(self) -> RemiResult<()> {
-        Ok(self.inner.into_inner().close().await?)
-    }
 }
 
 #[remi_core::async_trait]
 impl<Conn, Codec> FramedConnection for FramedStreamConnection<Conn, Codec>
 where
-    Conn: StreamConnection + Unpin,
+    Conn: StreamConnection + Unpin + Send,
     Codec: Decoder + Encoder<Codec::Item> + Send + Sync,
     Codec::Item: Send + Sync + Unpin,
     RemiError: From<<Codec as Encoder<Codec::Item>>::Error>

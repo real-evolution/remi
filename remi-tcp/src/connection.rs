@@ -1,8 +1,7 @@
-use std::{net, pin, task};
+use std::{io, net, pin, task};
 
-use remi_core::error::RemiResult;
 use remi_core::io::Connection;
-use tokio::io::{AsyncRead, AsyncWrite, AsyncWriteExt, ReadBuf};
+use tokio::io::{AsyncRead, AsyncWrite, ReadBuf};
 use tokio::net::TcpStream;
 
 #[derive(Debug)]
@@ -20,10 +19,6 @@ impl Connection for RemiTcpConnection {
     fn id(&self) -> Option<Self::Id> {
         Some(self.address)
     }
-
-    async fn close(mut self) -> RemiResult<()> {
-        Ok(self.stream.shutdown().await?)
-    }
 }
 
 impl AsyncRead for RemiTcpConnection {
@@ -32,7 +27,7 @@ impl AsyncRead for RemiTcpConnection {
         self: pin::Pin<&mut Self>,
         cx: &mut task::Context<'_>,
         buf: &mut ReadBuf<'_>,
-    ) -> task::Poll<std::io::Result<()>> {
+    ) -> task::Poll<io::Result<()>> {
         self.project().stream.poll_read(cx, buf)
     }
 }
@@ -43,7 +38,7 @@ impl AsyncWrite for RemiTcpConnection {
         self: pin::Pin<&mut Self>,
         cx: &mut task::Context<'_>,
         buf: &[u8],
-    ) -> task::Poll<Result<usize, std::io::Error>> {
+    ) -> task::Poll<io::Result<usize>> {
         self.project().stream.poll_write(cx, buf)
     }
 
@@ -51,7 +46,7 @@ impl AsyncWrite for RemiTcpConnection {
     fn poll_flush(
         self: pin::Pin<&mut Self>,
         cx: &mut task::Context<'_>,
-    ) -> task::Poll<Result<(), std::io::Error>> {
+    ) -> task::Poll<io::Result<()>> {
         self.project().stream.poll_flush(cx)
     }
 
@@ -59,7 +54,7 @@ impl AsyncWrite for RemiTcpConnection {
     fn poll_shutdown(
         self: pin::Pin<&mut Self>,
         cx: &mut task::Context<'_>,
-    ) -> task::Poll<Result<(), std::io::Error>> {
+    ) -> task::Poll<io::Result<()>> {
         self.project().stream.poll_shutdown(cx)
     }
 }

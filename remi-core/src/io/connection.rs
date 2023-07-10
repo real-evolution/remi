@@ -4,14 +4,11 @@ use crate::error::RemiResult;
 
 /// A trait to represent a transport connection.
 #[crate::async_trait]
-pub trait Connection: Send + Sync {
-    type Id: Send + Sync + Clone + PartialEq + Eq + std::hash::Hash;
+pub trait Connection {
+    type Id: Clone + PartialEq + Eq + std::hash::Hash;
 
     /// Returns the id of this connection.
     fn id(&self) -> Option<Self::Id>;
-
-    /// Closes the connection.
-    async fn close(self) -> RemiResult<()>;
 }
 
 /// A trait to represent a frame-based transport connection.
