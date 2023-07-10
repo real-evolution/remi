@@ -1,0 +1,18 @@
+[package]
+name = "remi-util"
+version = "0.1.0"
+description = "`remi` utilities"
+keywords = ["rpc", "net", "microservice", "interconnect"]
+edition.workspace = true
+authors.workspace = true
+readme.workspace = true
+publish.workspace = true
+repository.workspace = true
+license-file.workspace = true
+
+[dependencies]
+# project dependencies
+remi-core = { path = "../remi-core" }
+
+# crate dependencies
+futures = { version = "0" }
