@@ -1,5 +1,5 @@
 mod acceptor;
 mod connection;
 
-pub use acceptor::{Acceptor, AcceptorState};
-pub use connection::{Connection, FramedConnection, StreamConnection};
+pub use acceptor::{Accepted, Acceptor, AcceptorItem};
+pub use connection::{Connection, Addressable};

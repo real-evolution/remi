@@ -1,28 +1,20 @@
-use tokio::io::{AsyncRead, AsyncWrite};
-
-use crate::error::RemiResult;
-
 /// A trait to represent a transport connection.
 #[crate::async_trait]
 pub trait Connection {
-    type Id: Clone + PartialEq + Eq + std::hash::Hash;
-
-    /// Returns the id of this connection.
-    fn id(&self) -> Option<Self::Id>;
-}
-
-/// A trait to represent a frame-based transport connection.
-#[crate::async_trait]
-pub trait FramedConnection: Connection {
     type Frame: Send;
+    type Error;
 
     /// Sends a frame through the connection.
-    async fn send(&mut self, frame: Self::Frame) -> RemiResult<()>;
+    async fn send(&mut self, frame: Self::Frame) -> Result<(), Self::Error>;
 
     /// Receives a frame from the connection.
-    async fn next(&mut self) -> Option<RemiResult<Self::Frame>>;
+    async fn next(&mut self) -> Option<Result<Self::Frame, Self::Error>>;
 }
 
-/// A trait to represent a stream-based transport connection.
-#[crate::async_trait]
-pub trait StreamConnection: Connection + AsyncRead + AsyncWrite {}
+/// A trait to represent an item with an address.
+pub trait Addressable {
+    type Address;
+
+    /// Returns the address of this item.
+    fn address(&self) -> &Self::Address;
+}

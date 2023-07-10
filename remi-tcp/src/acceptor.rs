@@ -1,84 +1,36 @@
-use std::io::{self, ErrorKind};
-use std::{net, task};
+use std::{io, net, task};
 
-use remi_core::error::RemiError;
-use remi_core::io::{Acceptor, AcceptorState};
-use tokio::net::{TcpListener, ToSocketAddrs};
-
-use crate::connection::RemiTcpConnection;
+use remi_core::io::{Acceptor, AcceptorItem};
+use tokio::net::{TcpListener, TcpStream, ToSocketAddrs};
 
 #[derive(Debug)]
-pub struct RemiTcpAcceptor {
-    listener: Option<TcpListener>,
-    address: net::SocketAddr,
-}
+pub struct TcpAcceptor(TcpListener);
 
-impl RemiTcpAcceptor {
-    pub fn new(address: net::SocketAddr) -> Self {
-        Self {
-            listener: None,
-            address,
-        }
+impl TcpAcceptor {
+    #[inline]
+    pub async fn bind<A: ToSocketAddrs>(addrs: A) -> io::Result<Self> {
+        let inner = TcpListener::bind(addrs).await?;
+
+        Ok(Self(inner))
     }
 
-    pub async fn bind<A: ToSocketAddrs>(addr: A) -> io::Result<Self> {
-        let listener = TcpListener::bind(addr).await?;
-        let address = listener.local_addr()?;
-
-        Ok(Self {
-            listener: Some(listener),
-            address,
-        })
-    }
-
-    pub async fn start(&mut self) -> io::Result<()> {
-        if self.listener.is_some() {
-            return Ok(());
-        };
-
-        self.listener = Some(TcpListener::bind(self.address).await?);
-
-        Ok(())
+    #[inline]
+    pub fn into_inner(self) -> TcpListener {
+        self.0
     }
 }
 
-impl Acceptor for RemiTcpAcceptor {
-    type Conn = RemiTcpConnection;
-    type Error = RemiError;
+impl Acceptor for TcpAcceptor {
+    type Address = net::SocketAddr;
+    type Connection = TcpStream;
+    type Error = io::Error;
 
     fn poll_accept(
         &mut self,
         cx: &mut task::Context<'_>,
-    ) -> task::Poll<Result<Self::Conn, Self::Error>> {
-        let Some(ref listener) = self.listener else {
-            return Err(io::Error::new(
-                ErrorKind::NotConnected,
-                "listener not started",
-            ))?;
-        };
+    ) -> task::Poll<Result<AcceptorItem<Self>, Self::Error>> {
+        let (stream, addr) = task::ready!(self.0.poll_accept(cx))?;
 
-        let task::Poll::Ready(item) = listener.poll_accept(cx) else {
-            return task::Poll::Pending;
-        };
-
-        let item = match item {
-            | Ok(item) => RemiTcpConnection::from(item),
-            | Err(e) => {
-                self.listener = None;
-
-                return Err(e)?;
-            }
-        };
-
-        Ok(item).into()
-    }
-
-    #[inline(always)]
-    fn state(&self) -> AcceptorState {
-        if self.listener.is_some() {
-            AcceptorState::Running
-        } else {
-            AcceptorState::Stopped
-        }
+        Ok(AcceptorItem::<Self>::new(stream, addr)).into()
     }
 }
