@@ -16,8 +16,6 @@ remi-core = { path = "../remi-core" }
 remi-util = { path = "../remi-util" }
 
 # crate dependencies
-anyhow = { version = "1" }
-derive-new = {version = "0" }
 futures = { version = "0" }
 tower = { version = "0", features = ["make"] }
 tokio = { version = "1", features = ["full"] }
