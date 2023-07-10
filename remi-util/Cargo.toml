@@ -16,3 +16,5 @@ remi-core = { path = "../remi-core" }
 
 # crate dependencies
 futures = { version = "0" }
+tokio-util = { version = "0" }
+tower = { version = "0" }

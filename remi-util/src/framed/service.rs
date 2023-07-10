@@ -1,16 +1,22 @@
-use derive_new::new;
-use remi_core::edge::StreamConnection;
-
 use std::task::{Context, Poll};
+
+use remi_core::edge::StreamConnection;
 use tokio_util::codec::Framed;
 use tower::Service;
 
 use super::stream::FramedStreamConnection;
 
-#[derive(new)]
+#[derive(Debug)]
 pub struct FramedStreamService<S, Codec> {
     inner: S,
     codec: Codec,
+}
+
+impl<S, Codec> FramedStreamService<S, Codec> {
+    #[inline]
+    pub fn new(inner: S, codec: Codec) -> Self {
+        Self { inner, codec }
+    }
 }
 
 impl<S, Conn, Codec> Service<Conn> for FramedStreamService<S, Codec>
@@ -19,9 +25,9 @@ where
     Conn: StreamConnection,
     Codec: Clone,
 {
-    type Response = S::Response;
     type Error = S::Error;
     type Future = S::Future;
+    type Response = S::Response;
 
     fn poll_ready(
         &mut self,

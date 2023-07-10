@@ -337,6 +337,8 @@ version = "0.1.0"
 dependencies = [
  "futures",
  "remi-core",
+ "tokio-util",
+ "tower",
 ]
 
 [[package]]

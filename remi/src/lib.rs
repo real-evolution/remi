@@ -1,5 +1,4 @@
 mod serve;
-mod util;
 
 pub use serve::serve;
 

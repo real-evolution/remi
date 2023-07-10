@@ -1,18 +1,26 @@
-use remi_core::{
-    edge::{Connection, FramedConnection, StreamConnection},
-    error::{RemiError, RemiResult},
-};
-
-use derive_new::new;
 use futures::{SinkExt, StreamExt};
+use remi_core::edge::{Connection, FramedConnection, StreamConnection};
+use remi_core::error::{RemiError, RemiResult};
 use tokio_util::codec::{Decoder, Encoder, Framed};
 
-#[derive(new)]
+#[derive(Debug)]
 pub struct FramedStreamConnection<Conn, Codec> {
     inner: Framed<Conn, Codec>,
 }
 
-#[crate::async_trait]
+impl<Conn, Codec> FramedStreamConnection<Conn, Codec> {
+    #[inline]
+    pub fn new(inner: Framed<Conn, Codec>) -> Self {
+        Self { inner }
+    }
+
+    #[inline(always)]
+    pub fn into_inner(self) -> Framed<Conn, Codec> {
+        self.inner
+    }
+}
+
+#[remi_core::async_trait]
 impl<Conn, Codec> Connection for FramedStreamConnection<Conn, Codec>
 where
     Conn: Connection,
@@ -31,7 +39,7 @@ where
     }
 }
 
-#[crate::async_trait]
+#[remi_core::async_trait]
 impl<Conn, Codec> FramedConnection for FramedStreamConnection<Conn, Codec>
 where
     Conn: StreamConnection + Unpin,

@@ -1,11 +1,17 @@
-use derive_new::new;
 use tower::Layer;
 
 use super::service::FramedStreamService;
 
-#[derive(new)]
+#[derive(Debug)]
 pub struct FramedStreamLayer<Codec> {
     codec: Codec,
+}
+
+impl<Codec> FramedStreamLayer<Codec> {
+    #[inline]
+    pub fn new(codec: Codec) -> Self {
+        Self { codec }
+    }
 }
 
 impl<S, Codec> Layer<S> for FramedStreamLayer<Codec>
