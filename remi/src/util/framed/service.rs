@@ -27,7 +27,6 @@ where
         &mut self,
         cx: &mut Context<'_>,
     ) -> Poll<Result<(), Self::Error>> {
-        let x = 434;
         self.inner.poll_ready(cx)
     }
 
