@@ -14,7 +14,7 @@ pub trait Connection {
 /// A trait to represent a frame-based transport connection.
 #[crate::async_trait]
 pub trait FramedConnection: Connection {
-    type Frame: Send + Sync + Unpin;
+    type Frame: Send;
 
     /// Sends a frame through the connection.
     async fn send(&mut self, frame: Self::Frame) -> RemiResult<()>;

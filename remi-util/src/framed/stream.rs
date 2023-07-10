@@ -38,7 +38,7 @@ impl<Conn, Codec> FramedConnection for FramedStreamConnection<Conn, Codec>
 where
     Conn: StreamConnection + Unpin + Send,
     Codec: Decoder + Encoder<Codec::Item> + Send + Sync,
-    Codec::Item: Send + Sync + Unpin,
+    Codec::Item: Send,
     RemiError: From<<Codec as Encoder<Codec::Item>>::Error>
         + From<<Codec as Decoder>::Error>,
 {
