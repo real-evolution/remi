@@ -1,6 +1,6 @@
 use std::task::{Context, Poll};
 
-use remi_core::edge::StreamConnection;
+use remi_core::io::StreamConnection;
 use tokio_util::codec::Framed;
 use tower::Service;
 

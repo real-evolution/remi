@@ -1,6 +1,6 @@
 mod accept;
 
-use remi_core::edge::Acceptor;
+use remi_core::io::Acceptor;
 
 pub trait AcceptorExt: Acceptor + Sized {
     /// Asynchrnously accepts a connection.

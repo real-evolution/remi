@@ -2,7 +2,7 @@ use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use futures::Future;
-use remi_core::edge::Acceptor;
+use remi_core::io::Acceptor;
 
 #[derive(Debug)]
 pub struct Accept<'a, A> {

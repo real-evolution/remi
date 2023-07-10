@@ -1,6 +1,6 @@
 use futures::{SinkExt, StreamExt};
-use remi_core::edge::{Connection, FramedConnection, StreamConnection};
 use remi_core::error::{RemiError, RemiResult};
+use remi_core::io::{Connection, FramedConnection, StreamConnection};
 use tokio_util::codec::{Decoder, Encoder, Framed};
 
 #[derive(Debug)]

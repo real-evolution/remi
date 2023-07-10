@@ -1,6 +1,7 @@
-use std::{convert::Infallible, error::Error};
+use std::convert::Infallible;
+use std::error::Error;
 
-use remi_core::edge::Acceptor;
+use remi_core::io::{Acceptor, AcceptorState};
 use remi_util::ext::AcceptorExt;
 use tower::Service;
 
@@ -15,7 +16,7 @@ where
     S: Service<(), Response = (), Error = Box<dyn Error>> + Send + 'static,
     S::Future: Send,
 {
-    loop {
+    while let AcceptorState::Running = acceptor.state() {
         let mut conn = acceptor.accept().await?;
         let mut service = make_service
             .call(&mut conn)
@@ -28,4 +29,6 @@ where
             }
         });
     }
+
+    Ok(())
 }

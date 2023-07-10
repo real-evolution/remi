@@ -1,10 +1,9 @@
 use std::{net, pin, task};
 
-use remi_core::{edge::Connection, error::RemiResult};
-use tokio::{
-    io::{AsyncRead, AsyncWrite, AsyncWriteExt, ReadBuf},
-    net::TcpStream,
-};
+use remi_core::error::RemiResult;
+use remi_core::io::Connection;
+use tokio::io::{AsyncRead, AsyncWrite, AsyncWriteExt, ReadBuf};
+use tokio::net::TcpStream;
 
 #[derive(Debug)]
 #[pin_project::pin_project]

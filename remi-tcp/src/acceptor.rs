@@ -1,8 +1,8 @@
 use std::io::{self, ErrorKind};
 use std::{net, task};
 
-use remi_core::edge::{Acceptor, AcceptorState};
 use remi_core::error::RemiError;
+use remi_core::io::{Acceptor, AcceptorState};
 use tokio::net::{TcpListener, ToSocketAddrs};
 
 use crate::connection::RemiTcpConnection;
