@@ -1,7 +1,4 @@
-use std::{
-    pin::Pin,
-    task::{Context, Poll},
-};
+use std::task::{Context, Poll};
 
 use super::connection::Connection;
 
@@ -20,7 +17,7 @@ pub trait Acceptor: Unpin + Send {
 
     // Polls for a new connection.
     fn poll_accept(
-        self: Pin<&mut Self>,
+        &mut self,
         cx: &mut Context<'_>,
     ) -> Poll<Result<Self::Conn, Self::Error>>;
 

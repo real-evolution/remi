@@ -1,9 +1,8 @@
-use remi_core::{
-    edge::{Acceptor, AcceptorState},
-    error::RemiError,
-};
+use std::io::{self, ErrorKind};
+use std::{net, task};
 
-use std::{io, net, pin, task};
+use remi_core::edge::{Acceptor, AcceptorState};
+use remi_core::error::RemiError;
 use tokio::net::{TcpListener, ToSocketAddrs};
 
 use crate::connection::RemiTcpConnection;
@@ -49,11 +48,15 @@ impl Acceptor for RemiTcpAcceptor {
 
     // Required method
     fn poll_accept(
-        mut self: pin::Pin<&mut Self>,
+        &mut self,
         cx: &mut task::Context<'_>,
-    ) -> task::Poll<Option<Result<Self::Conn, Self::Error>>> {
+    ) -> task::Poll<Result<Self::Conn, Self::Error>> {
         let Some(ref listener) = self.listener else {
-            return task::Poll::Ready(None);
+            return task::Poll::Ready(Err(io::Error::new(
+                ErrorKind::NotConnected,
+                "listener not started",
+            )
+            .into()));
         };
 
         let task::Poll::Ready(item) = listener.poll_accept(cx) else {
@@ -61,15 +64,15 @@ impl Acceptor for RemiTcpAcceptor {
         };
 
         let item = match item {
-            | Ok(item) => Ok(item.into()),
+            | Ok(item) => RemiTcpConnection::from(item),
             | Err(e) => {
                 self.listener = None;
 
-                Err(e.into())
+                return task::Poll::Ready(Err(e.into()));
             }
         };
 
-        task::Poll::Ready(Some(item))
+        task::Poll::Ready(Ok(item))
     }
 
     #[inline(always)]
