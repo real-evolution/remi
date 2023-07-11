@@ -1,5 +1,7 @@
+mod codec;
 mod streaming;
 
+pub use codec::{MessageDecoder, MessageEncoder};
 pub use streaming::Streaming;
 
 /// A type alias for a message with streaming body.
