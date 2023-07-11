@@ -1,8 +1,7 @@
 /// A trait to be implemented by types that convert frames to messages.
-pub trait MessageDecoder<F> {
+pub trait Decoder<F> {
     type Error;
-    type Metadata;
-    type Data;
+    type Item: super::Message;
 
     /// Deocdes a frame into a message.
     ///
@@ -11,18 +10,14 @@ pub trait MessageDecoder<F> {
     ///
     /// # Returns
     /// The decoded message.
-    fn decode(
-        &mut self,
-        frame: F,
-    ) -> Result<super::Message<Self::Metadata, Self::Data>, Self::Error>;
+    fn decode(&mut self, frame: F) -> Result<Option<Self::Item>, Self::Error>;
 }
 
 /// A trait to be implemented by types that convert messages to frames. The
 /// opposite of [`MessageDecoder<F>`].
-pub trait MessageEncoder<F> {
+pub trait Encoder<F> {
     type Error;
-    type Metadata;
-    type Data;
+    type Item: super::Message;
 
     /// Encodes a message into a frame.
     ///
@@ -31,8 +26,11 @@ pub trait MessageEncoder<F> {
     ///
     /// # Returns
     /// The encoded frame.
-    fn encode(
-        &mut self,
-        message: super::Message<Self::Metadata, Self::Data>,
-    ) -> Result<F, Self::Error>;
+    fn encode(&mut self, message: Self::Item) -> Result<F, Self::Error>;
 }
+
+/// A convenience trait that combines [`MessageDecoder<F>`] and
+/// [`MessageEncoder<F>`].
+pub trait Codec<F>: Decoder<F> + Encoder<F> {}
+
+impl<F, T> Codec<F> for T where T: Decoder<F> + Encoder<F> {}
