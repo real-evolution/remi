@@ -1,0 +1,11 @@
+[package]
+name = "hello-world"
+version = "0.1.0"
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+remi = { path = "../../remi" }
+remi-tcp = { path = "../../remi-tcp" }
+tokio = { version = "1", features = ["full"] }

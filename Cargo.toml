@@ -1,5 +1,5 @@
 [workspace]
-members = ["remi-core", "remi", "remi-util", "remi-tcp", "remi-rsocket"]
+members = ["remi-core", "remi", "remi-util", "remi-tcp", "remi-rsocket", "examples/*"]
 resolver = "2"
 
 [workspace.package]
