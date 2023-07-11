@@ -11,9 +11,14 @@ repository.workspace = true
 license-file.workspace = true
 
 [dependencies]
+# external dependencies
+rsocket-proto = { path = "../../rsocket-proto" }
+
 # project dependencies
 remi-core = { path = "../remi-core" }
-remi = { path = "../remi" }
 
 # crate dependencies
-futures = { version = "0" }
+futures = { vesion = "0" }
+thiserror = { version = "1" }
+tokio = { version = "1" }
+tokio-util = { version = "0", features = ["codec"] }
