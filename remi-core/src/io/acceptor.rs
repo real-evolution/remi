@@ -53,12 +53,3 @@ impl<C, A> Accepted<C, A> {
         &self.addr
     }
 }
-
-impl<C, A> super::Addressable for Accepted<C, A> {
-    type Address = A;
-
-    #[inline]
-    fn address(&self) -> &Self::Address {
-        &self.addr
-    }
-}
