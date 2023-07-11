@@ -1,3 +1,10 @@
+mod streaming;
+
+pub use streaming::Streaming;
+
+/// A type alias for a message with streaming body.
+pub type StreamingMessage<'a, M, B> = Message<M, Streaming<'a, B>>;
+
 /// A type to represent a message.
 ///
 /// # Type Parameters
