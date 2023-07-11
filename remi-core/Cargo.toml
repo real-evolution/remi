@@ -13,3 +13,4 @@ license-file.workspace = true
 [dependencies]
 futures = { version = "0" }
 thiserror = { version = "1" }
+tower = { version = "0" }
