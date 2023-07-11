@@ -1,4 +1,5 @@
-use futures::Future;
+use std::future::Future;
+
 use tower::Service;
 
 use crate::message::Message;

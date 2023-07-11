@@ -11,6 +11,7 @@ repository.workspace = true
 license-file.workspace = true
 
 [dependencies]
-futures = { version = "0" }
 thiserror = { version = "1" }
 tower = { version = "0" }
+tokio = { version = "1" }
+tokio-stream = { version = "0" }
