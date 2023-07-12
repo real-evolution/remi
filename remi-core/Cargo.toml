@@ -11,6 +11,7 @@ repository.workspace = true
 license-file.workspace = true
 
 [dependencies]
+kanal = { version = "0.1.0-pre8" }
 thiserror = { version = "1" }
 tower = { version = "0" }
 tokio = { version = "1" }

@@ -1,4 +1,5 @@
 mod codec;
+mod channel;
 
 pub use self::codec::{Codec, Decoder, Encoder};
 
