@@ -9,7 +9,7 @@ pub struct MultiConsumer<T>(kanal::AsyncReceiver<T>);
 /// Creates an unbounded multi-producer, multi-consumer channel.
 #[inline]
 #[must_use]
-pub fn multi_unbounded<T>() -> (MultiProducer<T>, MultiConsumer<T>) {
+pub fn unbounded<T>() -> (MultiProducer<T>, MultiConsumer<T>) {
     let (sender, receiver) = kanal::unbounded_async();
 
     (MultiProducer(sender), MultiConsumer(receiver))
@@ -21,7 +21,7 @@ pub fn multi_unbounded<T>() -> (MultiProducer<T>, MultiConsumer<T>) {
 /// * `bound` - The maximum number of elements the channel can hold.
 #[inline]
 #[must_use]
-pub fn multi_bounded<T>(bound: usize) -> (MultiProducer<T>, MultiConsumer<T>) {
+pub fn bounded<T>(bound: usize) -> (MultiProducer<T>, MultiConsumer<T>) {
     let (sender, receiver) = kanal::bounded_async(bound);
 
     (MultiProducer(sender), MultiConsumer(receiver))
