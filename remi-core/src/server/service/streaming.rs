@@ -1,6 +1,6 @@
 use std::future::Future;
 
-use tokio_stream::Stream;
+use futures::Stream;
 use tower::Service;
 
 use crate::message::Message;
