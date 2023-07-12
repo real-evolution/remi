@@ -128,3 +128,16 @@ pub fn bounded<T>(bound: usize) -> (MultiProducer<T>, MultiConsumer<T>) {
 
     (MultiProducer(sender), MultiConsumer(receiver))
 }
+
+/// Creates an optionally bounded multi-producer, multi-consumer channel.
+///
+/// # Parameters
+/// * `bound` - If [`Some(usize)`], this value is maximum number of elements the
+///   channel can hold.
+#[inline]
+#[must_use]
+pub fn maybe_bounded<T>(
+    bound: Option<usize>,
+) -> (MultiProducer<T>, MultiConsumer<T>) {
+    bound.map(bounded).unwrap_or_else(unbounded)
+}

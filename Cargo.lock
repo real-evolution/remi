@@ -253,6 +253,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
 
 [[package]]
+name = "kanal"
+version = "0.1.0-pre8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b05d55519627edaf7fd0f29981f6dc03fb52df3f5b257130eb8d0bf2801ea1d7"
+dependencies = [
+ "futures-core",
+ "lock_api",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.146"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -534,9 +544,8 @@ dependencies = [
 name = "remi-core"
 version = "0.1.0"
 dependencies = [
+ "futures",
  "thiserror",
- "tokio",
- "tokio-stream",
  "tower",
 ]
 
@@ -546,6 +555,7 @@ version = "0.1.0"
 dependencies = [
  "futures",
  "remi-core",
+ "remi-util",
  "rsocket-proto",
  "thiserror",
  "tokio",
@@ -567,7 +577,9 @@ name = "remi-util"
 version = "0.1.0"
 dependencies = [
  "futures",
+ "kanal",
  "remi-core",
+ "thiserror",
  "tokio-util",
  "tower",
 ]
@@ -719,17 +731,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.18",
-]
-
-[[package]]
-name = "tokio-stream"
-version = "0.1.14"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "397c988d37662c7dda6d2208364a706264bf3d6138b11d436cbac0ad38832842"
-dependencies = [
- "futures-core",
- "pin-project-lite",
- "tokio",
 ]
 
 [[package]]

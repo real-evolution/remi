@@ -16,5 +16,7 @@ remi-core = { path = "../remi-core" }
 
 # crate dependencies
 futures = { version = "0" }
+kanal = { version = "0.1.0-pre8" }
+thiserror = { version = "1" }
 tokio-util = { version = "0" }
 tower = { version = "0" }

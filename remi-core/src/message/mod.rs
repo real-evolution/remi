@@ -1,7 +1,4 @@
-mod codec;
-mod channel;
-
-pub use self::codec::{Codec, Decoder, Encoder};
+pub mod codec;
 
 pub trait Message {
     type Metadata;

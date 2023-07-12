@@ -65,3 +65,16 @@ pub fn bounded<T, R>(bound: usize) -> (DuplixSide<T, R>, DuplixSide<R, T>) {
 
     (DuplixSide::new(tx1, rx1), DuplixSide::new(tx2, rx2))
 }
+
+/// Creates an optionally bounded multi-producer, multi-consumer channel.
+///
+/// # Parameters
+/// * `bound` - If [`Some(usize)`], this value is maximum number of elements the
+///   channel can hold.
+#[inline]
+#[must_use]
+pub fn maybe_bounded<T, R>(
+    bound: Option<usize>,
+) -> (DuplixSide<T, R>, DuplixSide<R, T>) {
+    bound.map(bounded).unwrap_or_else(unbounded)
+}
