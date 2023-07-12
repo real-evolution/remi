@@ -16,6 +16,7 @@ rsocket-proto = { path = "../../rsocket-proto" }
 
 # project dependencies
 remi-core = { path = "../remi-core" }
+remi-util = { path = "../remi-util" }
 
 # crate dependencies
 futures = { vesion = "0" }

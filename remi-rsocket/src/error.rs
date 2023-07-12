@@ -9,4 +9,10 @@ pub enum Error {
 
     #[error("rsocket protocol error: {0}")]
     Protocol(#[from] crate::proto::Error),
+
+    #[error("channel produce error: {0}")]
+    ChannelProduce(#[from] remi_util::channel::error::ProduceError),
+
+    #[error("channel consume error: {0}")]
+    ChannelConsume(#[from] remi_util::channel::error::ConsumeError),
 }
