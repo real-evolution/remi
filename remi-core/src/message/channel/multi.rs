@@ -13,6 +13,7 @@ impl<T> MultiProducer<T> {
     ///
     /// # Parameters
     /// - `value`: The value to send.
+    #[inline]
     pub async fn send(
         &self,
         value: T,
