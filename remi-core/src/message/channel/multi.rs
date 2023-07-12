@@ -5,7 +5,7 @@ use futures::stream::FusedStream;
 use futures::{Stream, StreamExt};
 
 /// A multi-producer, multi-consumer sender side.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct MultiProducer<T>(kanal::AsyncSender<T>);
 
 impl<T> MultiProducer<T> {
@@ -47,7 +47,7 @@ impl<T> MultiProducer<T> {
 }
 
 /// A multi-producer, multi-consumer consumer side.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct MultiConsumer<T>(kanal::AsyncReceiver<T>);
 
 impl<T> MultiConsumer<T> {
