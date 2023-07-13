@@ -1,26 +1,42 @@
-use remi_core::io::Acceptor;
-use remi_util::ext::AcceptorExt;
-use tokio::io::{AsyncRead, AsyncReadExt, AsyncWrite};
+use std::convert::Infallible;
 
-pub async fn serve<A>(acceptor: A) -> std::io::Result<()>
+use remi_core::io::{Acceptor, AcceptorItem};
+use remi_core::server::protocol::Protocol;
+use remi_util::ext::AcceptorExt;
+use tokio::macros::support::poll_fn;
+use tower::Service;
+
+pub async fn serve<A, M, P, S>(
+    mut accpetor: A,
+    mut make_service: M,
+    mut protocol: P,
+) -> Result<(), A::Error>
 where
     A: Acceptor,
     A::Address: std::fmt::Debug,
-    A::Connection: AsyncRead + AsyncWrite,
-    std::io::Error: From<A::Error>,
-    <A as remi_core::io::Acceptor>::Connection: std::marker::Unpin,
+    M: for<'a> Service<&'a AcceptorItem<A>, Response = S, Error = Infallible>,
+    P: Protocol<A::Connection, S>,
 {
-    let mut acceptor = acceptor;
-
     loop {
-        let (mut conn, addr) = acceptor.accept().await?.split();
+        let Ok(accept) = accpetor.accept().await else {
+            break;
+        };
 
-        println!("Accepted connection from {:?}", addr);
+        poll_fn(|cx| make_service.poll_ready(cx))
+            .await
+            .unwrap_or_else(|err| match err {});
 
-        let mut buf = [0u8; 1024];
-        let n = conn.read(&mut buf).await?;
-        let s = std::str::from_utf8(&buf[..n]).unwrap();
+        let service = make_service
+            .call(&accept)
+            .await
+            .unwrap_or_else(|err| match err {});
 
-        println!("Received: {}", s);
+        let (conn, addr) = accept.split();
+
+        println!("Got connection from {:?}", addr);
+
+        tokio::task::spawn(protocol.serve(conn, service));
     }
+
+    Ok(())
 }
