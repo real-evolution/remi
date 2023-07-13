@@ -6,8 +6,8 @@ pub type AcceptorItem<A> =
 
 /// A trait to represent a connection acceptor.
 pub trait Acceptor: Unpin + Send {
-    type Connection;
-    type Address;
+    type Connection: Send;
+    type Address: Send;
     type Error;
 
     // Polls for a new connection.
