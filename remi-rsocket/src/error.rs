@@ -8,7 +8,7 @@ pub enum Error {
     Io(#[from] std::io::Error),
 
     #[error("rsocket protocol error: {0}")]
-    Protocol(#[from] crate::proto::Error),
+    Protocol(#[from] rsocket_proto::Error),
 
     #[error("channel produce error: {0}")]
     ChannelProduce(#[from] remi_util::channel::error::ProduceError),
