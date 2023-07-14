@@ -43,8 +43,12 @@ impl<T> Encoder<Frame> for Connection<T> {
     }
 }
 
-impl<T, C> DerefMut for Connection<T, C> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
+impl<T> From<T> for Connection<T>
+where
+    T: AsyncRead + AsyncWrite + Unpin,
+{
+    #[inline]
+    fn from(inner: T) -> Self {
+        Self::new(inner)
     }
 }
