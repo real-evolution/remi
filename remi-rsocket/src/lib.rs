@@ -1,7 +1,7 @@
 mod error;
-mod io;
 mod request;
 mod server;
+mod instance;
 
 pub use error::{Error, Result};
-pub use server::{RSocket, RSocketServer};
+pub use server::RSocketServer;
