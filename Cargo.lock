@@ -244,8 +244,10 @@ name = "hello-world"
 version = "0.1.0"
 dependencies = [
  "remi",
+ "remi-rsocket",
  "remi-tcp",
  "tokio",
+ "tower",
 ]
 
 [[package]]
@@ -564,6 +566,7 @@ dependencies = [
 name = "remi-rsocket"
 version = "0.1.0"
 dependencies = [
+ "bytes",
  "futures",
  "remi-core",
  "remi-util",
@@ -571,6 +574,7 @@ dependencies = [
  "thiserror",
  "tokio",
  "tokio-util",
+ "tower",
 ]
 
 [[package]]
@@ -765,7 +769,9 @@ version = "0.4.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b8fa9be0de6cf49e536ce1851f987bd21a43b771b09473c3549a6c853db37c1c"
 dependencies = [
+ "futures-core",
  "futures-util",
+ "pin-project",
  "pin-project-lite",
  "tokio",
  "tower-layer",

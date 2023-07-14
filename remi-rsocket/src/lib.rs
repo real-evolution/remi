@@ -4,4 +4,4 @@ mod request;
 mod server;
 
 pub use error::{Error, Result};
-pub use server::RSocket;
+pub use server::{RSocket, RSocketServer};

@@ -1,39 +1,17 @@
-use std::future::ready;
-use std::marker::PhantomData;
-use std::task::{Context, Poll};
+mod service;
 
-use futures::future::BoxFuture;
-use remi_core::server::protocol::Protocol;
-use tokio::net::TcpStream;
+pub use service::RSocketServer;
 
-#[derive(Debug, Clone, Default)]
+use crate::io::Connection;
+
+#[derive(Debug)]
 pub struct RSocket<Conn> {
-    _marker: PhantomData<Conn>,
+    _conn: Connection<Conn>,
 }
 
-impl RSocket<TcpStream> {
+impl<Conn> RSocket<Conn> {
     #[inline]
-    pub fn new() -> Self {
-        Self {
-            _marker: PhantomData,
-        }
-    }
-}
-
-impl<Svc> Protocol<TcpStream, Svc> for RSocket<TcpStream> {
-    type Error = crate::Error;
-    type Future = BoxFuture<'static, Result<(), Self::Error>>;
-
-    fn poll_ready(
-        &mut self,
-        _cx: &mut Context<'_>,
-    ) -> Poll<Result<(), Self::Error>> {
-        Poll::Ready(Ok(()))
-    }
-
-    fn serve(&mut self, conn: TcpStream, _service: Svc) -> Self::Future {
-        println!("serving: {}", conn.local_addr().unwrap());
-
-        Box::pin(ready(Ok(())))
+    pub fn new(conn: Connection<Conn>) -> Self {
+        Self { _conn: conn }
     }
 }

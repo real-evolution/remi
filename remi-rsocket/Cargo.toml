@@ -19,6 +19,7 @@ remi-core = { path = "../remi-core" }
 remi-util = { path = "../remi-util" }
 
 # crate dependencies
+bytes = { version = "1" }
 futures = { version = "0" }
 thiserror = { version = "1" }
 tokio = { version = "1" }
