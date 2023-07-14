@@ -1,7 +1,7 @@
 use std::convert::Infallible;
 
 use remi_core::io::{Acceptor, AcceptorItem};
-use remi_core::server::protocol::Protocol;
+use remi_core::server::service::{Instance, Server};
 use remi_util::ext::AcceptorExt;
 use tokio::macros::support::poll_fn;
 use tower::Service;
@@ -9,13 +9,15 @@ use tower::Service;
 pub async fn serve<A, M, P, S>(
     mut accpetor: A,
     mut make_service: M,
-    mut protocol: P,
+    mut server: P,
 ) -> Result<(), A::Error>
 where
     A: Acceptor,
-    A::Address: std::fmt::Debug,
     M: for<'a> Service<&'a AcceptorItem<A>, Response = S, Error = Infallible>,
-    P: Protocol<A::Connection, S>,
+    P: Server<A::Connection, S, MakeError = Infallible>,
+    S: Send + 'static,
+    P::Service: Instance<S>,
+    <P::Service as Service<S>>::Future: Send,
 {
     loop {
         let Ok(accept) = accpetor.accept().await else {
@@ -31,11 +33,23 @@ where
             .await
             .unwrap_or_else(|err| match err {});
 
-        let (conn, addr) = accept.split();
+        poll_fn(|cx| server.poll_ready(cx))
+            .await
+            .unwrap_or_else(|err| match err {});
 
-        println!("Got connection from {:?}", addr);
+        let (conn, _) = accept.split();
 
-        tokio::task::spawn(protocol.serve(conn, service));
+        let mut conn_service = server
+            .make_service(conn)
+            .await
+            .unwrap_or_else(|err| match err {});
+
+        tokio::task::spawn(async move {
+            match conn_service.call(service).await {
+                | Ok(()) => {}
+                | Err(_) => {}
+            };
+        });
     }
 
     Ok(())
