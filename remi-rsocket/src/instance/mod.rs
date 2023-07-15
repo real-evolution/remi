@@ -1,16 +1,15 @@
 mod io;
 mod service;
 
-pub(crate) use io::Connection;
+use std::time::Duration;
+
+use rsocket_proto::frame::Setup;
+
+pub use self::io::{ext, pipe, StreamConnection};
 
 #[derive(Debug)]
 pub struct RSocket<Conn> {
-    _conn: io::Connection<Conn>,
-}
-
-impl<Conn> RSocket<Conn> {
-    #[inline]
-    pub fn new(conn: Connection<Conn>) -> Self {
-        Self { _conn: conn }
-    }
+    pub(crate) conn: Conn,
+    pub(crate) lifetime: Duration,
+    pub(crate) setup_frame: Setup,
 }

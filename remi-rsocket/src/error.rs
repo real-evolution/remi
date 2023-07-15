@@ -15,4 +15,14 @@ pub enum Error {
 
     #[error("channel consume error: {0}")]
     ChannelConsume(#[from] remi_util::channel::error::ConsumeError),
+
+    #[error("unexpected frame `{}' (expected: `{}': {}", .actual_frame, .expected_frame, .message)]
+    UnexpectedFrame {
+        expected_frame: rsocket_proto::frame::FrameType,
+        actual_frame: rsocket_proto::frame::FrameType,
+        message: &'static str,
+    },
+
+    #[error("unsupported mime type: {0:?}")]
+    UnsupportedMimeType(bytes::Bytes),
 }

@@ -1,3 +1,5 @@
-mod connection;
+pub mod ext;
+pub mod stream;
+pub mod pipe;
 
-pub use connection::Connection;
+pub use stream::StreamConnection;

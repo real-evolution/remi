@@ -568,6 +568,7 @@ version = "0.1.0"
 dependencies = [
  "bytes",
  "futures",
+ "pin-project",
  "remi-core",
  "remi-util",
  "rsocket-proto",

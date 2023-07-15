@@ -1,5 +1,5 @@
 use std::future::ready;
-use std::task::Poll;
+use std::task::{Context, Poll};
 
 use futures::future::BoxFuture;
 use tower::Service;
@@ -11,7 +11,7 @@ impl<Conn, Svc> Service<Svc> for super::RSocket<Conn> {
 
     fn poll_ready(
         &mut self,
-        _cx: &mut std::task::Context<'_>,
+        _cx: &mut Context<'_>,
     ) -> Poll<Result<(), Self::Error>> {
         Poll::Ready(Ok(()))
     }
