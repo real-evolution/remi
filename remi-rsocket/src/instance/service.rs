@@ -16,6 +16,12 @@ impl<Conn, Svc> Service<Svc> for super::RSocket<Conn> {
         Poll::Ready(Ok(()))
     }
 
+    #[inline]
+    #[tracing::instrument(
+        level = "trace",
+        skip(self, _req),
+        "RSocket::<Conn>::call"
+    )]
     fn call(&mut self, _req: Svc) -> Self::Future {
         Box::pin(ready(Ok(())))
     }

@@ -19,6 +19,8 @@ impl TcpAcceptor {
     pub async fn bind<A: ToSocketAddrs>(addrs: A) -> io::Result<Self> {
         let inner = TcpListener::bind(addrs).await?;
 
+        tracing::info!(addr = ?inner.local_addr(), "TcpAcceptor bound");
+
         Ok(Self(inner))
     }
 

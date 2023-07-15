@@ -3,10 +3,13 @@ use std::time::Duration;
 use remi::core::io::AcceptorItem;
 use remi_tcp::TcpAcceptor;
 use tower::service_fn;
+use tracing::Level;
 
 #[tokio::main]
 async fn main() {
-    let subscriber = tracing_subscriber::fmt().pretty().finish();
+    let subscriber = tracing_subscriber::fmt().pretty()
+        .with_max_level(Level::TRACE)
+        .finish();
 
     tracing::subscriber::set_global_default(subscriber).unwrap();
 

@@ -14,12 +14,6 @@ where
     type Future = util::Setup<StreamConnection<T>>;
     type Response = RSocket<StreamConnection<T>>;
 
-    #[inline]
-    #[tracing::instrument(
-        level = "trace",
-        skip(self, _cx),
-        "RSocketStreamConnection::poll_ready"
-    )]
     fn poll_ready(
         &mut self,
         _cx: &mut Context<'_>,

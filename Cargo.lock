@@ -612,6 +612,7 @@ dependencies = [
  "remi",
  "remi-core",
  "tokio",
+ "tracing",
 ]
 
 [[package]]
