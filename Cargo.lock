@@ -535,7 +535,7 @@ dependencies = [
 
 [[package]]
 name = "recode"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "bytes",
  "delegate",
@@ -547,7 +547,7 @@ dependencies = [
 
 [[package]]
 name = "recode-derive"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "darling",
  "paste",

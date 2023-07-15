@@ -73,15 +73,16 @@ where
                     }
                 };
 
-                let lifetime =
-                    Duration::from_millis((*setup.lifetime().deref()) as u64)
-                        .min(*max_lifetime);
+                let keepalive =
+                    Duration::from_millis(*setup.keepalive().deref() as u64);
 
-                Poll::Ready(Ok(RSocket {
-                    conn: conn.take().unwrap(),
-                    lifetime,
-                    setup_frame: setup,
-                }))
+                let rsocket = RSocket::new(
+                    conn.take().unwrap(),
+                    keepalive.min(*max_lifetime),
+                    setup,
+                );
+
+                Poll::Ready(Ok(rsocket))
             }
             | SetupProj::Error { conn, error_frame } => {
                 ready!(conn.poll_ready_unpin(cx))?;

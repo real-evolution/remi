@@ -11,7 +11,25 @@ pub use self::io::{ext, pipe, StreamConnection};
 #[derive(Debug)]
 #[allow(dead_code)]
 pub struct RSocket<Conn> {
-    pub(crate) conn: Conn,
-    pub(crate) lifetime: Duration,
-    pub(crate) setup_frame: Setup,
+    conn: Conn,
+    lifetime: Duration,
+    setup_frame: Setup,
+}
+
+impl<Conn> RSocket<Conn>
+where
+    Conn: pipe::FramePipe,
+{
+    #[inline]
+    pub const fn new(
+        conn: Conn,
+        lifetime: Duration,
+        setup_frame: Setup,
+    ) -> Self {
+        Self {
+            conn,
+            lifetime,
+            setup_frame,
+        }
+    }
 }
