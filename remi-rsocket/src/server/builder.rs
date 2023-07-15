@@ -4,6 +4,7 @@ use super::stream::builder::RSocketStreamServerBuilder;
 
 const DEFAULT_MAX_LIFETIME: Duration = Duration::from_secs(90);
 
+/// A top-level builder for [`RSocketServer`] and its variants.
 #[derive(Debug)]
 pub struct RSocketServerBuilder {
     max_lifetime: Option<Duration>,

@@ -7,6 +7,7 @@ use rsocket_proto::frame::Setup;
 
 pub use self::io::{ext, pipe, StreamConnection};
 
+/// A server instance to handle a single connection.
 #[derive(Debug)]
 #[allow(dead_code)]
 pub struct RSocket<Conn> {

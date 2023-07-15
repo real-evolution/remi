@@ -4,6 +4,8 @@ use std::task::{ready, Context, Poll};
 use rsocket_proto::frame::Frame;
 
 pub trait FrameStreamExt: super::FrameStream {
+    /// Poll the next frame from the stream, returning an error if the stream
+    /// is closed instead of returning `None`.
     fn poll_next_frame(
         self: Pin<&mut Self>,
         cx: &mut Context<'_>,
@@ -18,6 +20,8 @@ pub trait FrameStreamExt: super::FrameStream {
         })
     }
 
+    /// A convenience method to call [`FrameStreamExt::poll_next_frame`] without
+    /// needing to pin the stream.
     fn poll_next_frame_unpin(
         &mut self,
         cx: &mut Context<'_>,

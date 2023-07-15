@@ -2,6 +2,12 @@ use futures::SinkExt;
 use rsocket_proto::frame::{ErrorCode, Frame, StreamId};
 
 pub trait FrameSinkExt: super::FrameSink {
+    /// Sends an error frame with the given error code and message.
+    ///
+    /// # Parameters
+    /// - `stream_id` - The stream ID to use.
+    /// - `error_code` - The error code to use.
+    /// - `message` - The error message to use.
     #[inline]
     fn send_error(
         &mut self,

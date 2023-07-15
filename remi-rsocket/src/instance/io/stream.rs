@@ -7,6 +7,9 @@ use rsocket_proto::io::codec::FrameCodec;
 use tokio::io::{AsyncRead, AsyncWrite};
 use tokio_util::codec::Framed;
 
+/// A stream transport connection. This is a thin wrapper around a
+/// [`Framed`] transport, which can wrap any [`AsyncRead`] + [`AsyncWrite`]
+/// implementing transport type.
 #[derive(Debug)]
 pub struct StreamConnection<T>(Framed<T, FrameCodec>);
 
