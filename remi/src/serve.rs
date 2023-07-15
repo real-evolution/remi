@@ -1,4 +1,5 @@
 use std::convert::Infallible;
+use std::fmt::Display;
 
 use remi_core::io::{Acceptor, AcceptorItem};
 use remi_core::server::service::{Instance, Server};
@@ -13,6 +14,7 @@ pub async fn serve<A, M, P, S>(
 ) -> Result<(), A::Error>
 where
     A: Acceptor,
+    A::Address: Display,
     M: for<'a> Service<&'a AcceptorItem<A>, Response = S, Error = Infallible>,
     P: Server<A::Connection, S>,
     P::MakeError: std::error::Error,
@@ -24,6 +26,11 @@ where
         let Ok(accept) = accpetor.accept().await else {
             break;
         };
+
+        tracing::debug!(
+          address = %accept.address(),
+          "accepted a new connection"
+        );
 
         poll_fn(|cx| make_service.poll_ready(cx))
             .await
@@ -39,15 +46,21 @@ where
             continue;
         }
 
-        let (conn, _) = accept.split();
+        let (conn, addr) = accept.split();
 
         let mut conn_service = match server.make_service(conn).await {
             | Ok(conn_service) => conn_service,
             | Err(err) => {
-                eprintln!("server make_service error: {}", err);
+                tracing::warn!(
+                    address = %addr,
+                    error = %err,
+                    "could not setup connection"
+                );
                 continue;
             }
         };
+
+        tracing::info!(address = %addr, "serving connection");
 
         tokio::task::spawn(async move {
             match conn_service.call(service).await {

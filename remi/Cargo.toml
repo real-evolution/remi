@@ -19,3 +19,4 @@ remi-util = { path = "../remi-util" }
 tower = { version = "0", features = ["make"] }
 tokio = { version = "1", features = ["full"] }
 tokio-util = { version = "0", features = ["codec"] }
+tracing = { version  = "0" }

@@ -11,3 +11,5 @@ remi-tcp = { path = "../../remi-tcp" }
 remi-rsocket = { path = "../../remi-rsocket" }
 tokio = { version = "1", features = ["full"] }
 tower = { version = "0", features = ["util"] }
+tracing = { version  = "0" }
+tracing-subscriber = { version = "0" }
