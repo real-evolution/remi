@@ -3,10 +3,18 @@ use std::{io, net, task};
 use remi_core::io::{Acceptor, AcceptorItem};
 use tokio::net::{TcpListener, TcpStream, ToSocketAddrs};
 
+/// An acceptor type to accept TCP connections.
 #[derive(Debug)]
 pub struct TcpAcceptor(TcpListener);
 
 impl TcpAcceptor {
+    /// Creates a new [`TcpAcceptor`] with the given address.
+    ///
+    /// # Parameters
+    /// * `addrs` - The address to bind to.
+    ///
+    /// # Returns
+    /// A [`TcpAcceptor`] instance bound to `addrs`.
     #[inline]
     pub async fn bind<A: ToSocketAddrs>(addrs: A) -> io::Result<Self> {
         let inner = TcpListener::bind(addrs).await?;
@@ -14,6 +22,7 @@ impl TcpAcceptor {
         Ok(Self(inner))
     }
 
+    /// Consumes this [`TcpAcceptor`] and returns the inner [`TcpListener`].
     #[inline]
     pub fn into_inner(self) -> TcpListener {
         self.0
