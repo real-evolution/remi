@@ -14,7 +14,8 @@ pub async fn serve<A, M, P, S>(
 where
     A: Acceptor,
     M: for<'a> Service<&'a AcceptorItem<A>, Response = S, Error = Infallible>,
-    P: Server<A::Connection, S, MakeError = Infallible>,
+    P: Server<A::Connection, S>,
+    P::MakeError: std::error::Error,
     S: Send + 'static,
     P::Service: Instance<S>,
     <P::Service as Service<S>>::Future: Send,
@@ -33,16 +34,20 @@ where
             .await
             .unwrap_or_else(|err| match err {});
 
-        poll_fn(|cx| server.poll_ready(cx))
-            .await
-            .unwrap_or_else(|err| match err {});
+        if let Err(err) = poll_fn(|cx| server.poll_ready(cx)).await {
+            eprintln!("server poll_ready error: {}", err);
+            continue;
+        }
 
         let (conn, _) = accept.split();
 
-        let mut conn_service = server
-            .make_service(conn)
-            .await
-            .unwrap_or_else(|err| match err {});
+        let mut conn_service = match server.make_service(conn).await {
+            | Ok(conn_service) => conn_service,
+            | Err(err) => {
+                eprintln!("server make_service error: {}", err);
+                continue;
+            }
+        };
 
         tokio::task::spawn(async move {
             match conn_service.call(service).await {
