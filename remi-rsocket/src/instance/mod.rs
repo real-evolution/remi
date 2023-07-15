@@ -8,6 +8,7 @@ use rsocket_proto::frame::Setup;
 pub use self::io::{ext, pipe, StreamConnection};
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct RSocket<Conn> {
     pub(crate) conn: Conn,
     pub(crate) lifetime: Duration,
