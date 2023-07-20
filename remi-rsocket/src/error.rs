@@ -14,14 +14,6 @@ pub enum Error {
     #[error("rsocket protocol error: {0}")]
     Protocol(#[from] rsocket_proto::Error),
 
-    /// An error occurred while pushing an item to a channel.
-    #[error("channel produce error: {0}")]
-    ChannelProduce(#[from] remi_util::channel::error::ProduceError),
-
-    /// An error occurred while popping an item from a channel.
-    #[error("channel consume error: {0}")]
-    ChannelConsume(#[from] remi_util::channel::error::ConsumeError),
-
     /// An unexpected frame was received.
     #[error("unexpected frame `{}' (expected: `{}': {}", .actual_frame, .expected_frame, .message)]
     UnexpectedFrame {
