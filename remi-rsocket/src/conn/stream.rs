@@ -1,62 +1,19 @@
-use futures::{SinkExt, TryStreamExt};
-use rexer::lane::Lane;
+use derive_more::{From, Into};
+use futures::{Sink, Stream};
 use rsocket_proto::frame::{Frame, StreamId};
-use rsocket_proto::io::codec::FrameCodec;
-use tokio::io::{AsyncRead, AsyncWrite};
-use tokio::sync::mpsc;
-use tokio_util::codec::Framed;
 
-#[derive(Debug)]
-pub struct StreamConnection<T> {
-    inner: Framed<T, FrameCodec>,
-    mux_tx: rexer::Mux<StreamId, Frame>,
-    mux_rx: mpsc::Receiver<(StreamId, Frame)>,
-}
+/// A type to represent an error that occurs when sending a frame.
+#[derive(Debug, From, Into)]
+pub struct FrameSendError(pub Option<(StreamId, Frame)>);
 
-impl<T> StreamConnection<T>
-where
-    T: AsyncRead + AsyncWrite + Unpin,
-{
-    #[inline]
-    pub fn new(conn: T, conn_buf: usize, lane_buf: usize) -> Self {
-        let inner = Framed::new(conn, FrameCodec::default());
-        let (mux_tx, mux_rx) = rexer::Mux::new(conn_buf, lane_buf);
+/// A type to represent a lane of a connection.
+pub trait RStream {
+    /// The type of the writer side of the lane.
+    type Sink: Sink<Frame, Error = FrameSendError>;
 
-        Self {
-            inner,
-            mux_tx,
-            mux_rx,
-        }
-    }
+    /// The type of the reader side of the lane.
+    type Stream: Stream<Item = Frame>;
 
-    async fn serve_accept(
-        &mut self,
-    ) -> crate::Result<Option<Lane<StreamId, Frame>>> {
-        loop {
-            tokio::select! {
-                // incoming frames
-                incoming = self.inner.try_next() => {
-                    let (stream_id, frame) = match incoming? {
-                        Some(tagged) => tagged.split(),
-                        None => continue,
-                    };
-
-                    if let Some(lane) = self.mux_tx.send(stream_id, frame).await {
-                        return Ok(Some(lane));
-                    }
-                }
-
-                // outgoing frames
-                outgoing = self.mux_rx.recv() => {
-                    let Some((stream_id, frame)) = outgoing else {
-                        // TODO:
-                        // Check the possiblity of this actually occurring.
-                        return Ok(None);
-                    };
-
-                    self.inner.send(frame.tagged(stream_id)).await?;
-                }
-            }
-        }
-    }
+    /// Splits the lane into a sink and a stream.
+    fn split(self) -> (Self::Sink, Self::Stream);
 }
