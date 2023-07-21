@@ -2,7 +2,7 @@ mod stream;
 mod util;
 
 /// A module to implement [`RConnection`] for raw byte-stream connections.
-pub mod raw;
+pub mod tagged;
 
 use std::future::Future;
 

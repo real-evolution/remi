@@ -1,4 +1,5 @@
-use rsocket_proto::io::codec::FrameCodec;
+use rsocket_proto::frame::StreamId;
+use rsocket_proto::io::codec::{FragmentedFrameCodec, FrameCodec};
 use tokio::io::{AsyncRead, AsyncWrite};
 use tokio_util::codec::Framed;
 
@@ -7,12 +8,12 @@ const DEFAULT_STREAM_BUF: usize = 4;
 
 /// A builder for [`super::RawConnection`].
 #[derive(Debug, Clone)]
-pub struct RawConnectionBuilder {
+pub struct TaggedConnectionBuilder {
     conn_buf: usize,
     stream_buf: usize,
 }
 
-impl RawConnectionBuilder {
+impl TaggedConnectionBuilder {
     /// Creates a new instance of [`RawConnectionBuilder`] with default values.
     ///
     /// Default values are as follows:
@@ -49,18 +50,40 @@ impl RawConnectionBuilder {
         self
     }
 
-    /// Builds a [`super::RawConnection`] with the given connection.
+    /// Builds a [`super::TaggedConnection`] with the given connection.
     ///
     /// # Parameters
     /// - `conn` - The connection to wrap.
-    pub fn build<T: AsyncRead + AsyncWrite + Unpin>(
-        &mut self,
-        conn: T,
-    ) -> super::RawConnection<T> {
+    pub fn build<T>(&mut self, conn: T) -> super::UnfragmentedConnection<T>
+    where
+        T: AsyncRead + AsyncWrite + Unpin,
+    {
         let inner = Framed::new(conn, FrameCodec::default());
         let (mux_tx, mux_rx) = rexer::Mux::new(self.conn_buf, self.stream_buf);
 
-        super::RawConnection {
+        super::TaggedConnection {
+            inner,
+            mux_tx,
+            mux_rx,
+        }
+    }
+
+    /// Builds a [`super::TaggedConnection`] with the given connection, with
+    /// fragmentation support.
+    ///
+    /// # Parameters
+    /// - `conn` - The connection to wrap.
+    pub fn build_fragmented<const MTU: usize, T>(
+        &mut self,
+        conn: T,
+    ) -> super::FragmentedConnection<MTU, T>
+    where
+        T: AsyncRead + AsyncWrite + Unpin,
+    {
+        let inner = Framed::new(conn, FragmentedFrameCodec::<MTU>::default());
+        let (mux_tx, mux_rx) = rexer::Mux::new(self.conn_buf, self.stream_buf);
+
+        super::TaggedConnection {
             inner,
             mux_tx,
             mux_rx,

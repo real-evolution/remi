@@ -1,31 +1,41 @@
 mod builder;
 mod stream;
 
-use futures::{SinkExt, TryStreamExt};
-use rsocket_proto::frame::{Frame, StreamId};
-use rsocket_proto::io::codec::FrameCodec;
-use tokio::io::{AsyncRead, AsyncWrite};
+use futures::{Sink, SinkExt, Stream, TryStreamExt};
+use rsocket_proto::frame::{Frame, StreamId, TaggedFrame};
+use rsocket_proto::io::codec::{FragmentedFrameCodec, FrameCodec};
 use tokio::sync::mpsc;
 use tokio_util::codec::Framed;
 
-pub use self::builder::RawConnectionBuilder;
-pub use self::stream::RawStream;
-
+pub use self::builder::TaggedConnectionBuilder;
+pub use self::stream::TaggedStream;
 use crate::conn::ServeAcceptFuture;
+
+/// A type to represent a [`TaggedConnection`] with no support for
+/// fragmentation.
+pub type UnfragmentedConnection<T> = TaggedConnection<Framed<T, FrameCodec>>;
+
+/// A type to represent a [`TaggedConnection`] that supports fragmentation of
+/// frames from/into the size of the given `MTU`.
+pub type FragmentedConnection<const MTU: usize, T> =
+    TaggedConnection<Framed<T, FragmentedFrameCodec<MTU>>>;
 
 /// A raw byte-stream connection adapter.
 #[derive(Debug)]
-pub struct RawConnection<T> {
-    pub(super) inner: Framed<T, FrameCodec>,
+pub struct TaggedConnection<C> {
+    pub(super) inner: C,
     pub(super) mux_tx: rexer::Mux<StreamId, Frame>,
     pub(super) mux_rx: mpsc::Receiver<(StreamId, Frame)>,
 }
 
-impl<T> super::RConnection for RawConnection<T>
+impl<C, E> super::RConnection for TaggedConnection<C>
 where
-    T: AsyncRead + AsyncWrite + Unpin,
+    C: Sink<TaggedFrame, Error = E>
+        + Stream<Item = Result<TaggedFrame, E>>
+        + Unpin,
+    crate::Error: From<E>,
 {
-    type Stream = stream::RawStream;
+    type Stream = stream::TaggedStream;
 
     type Future<'a> = impl ServeAcceptFuture<Self::Stream> + 'a
     where
