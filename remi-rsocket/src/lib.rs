@@ -1,3 +1,4 @@
+mod conn;
 mod error;
 mod instance;
 mod request;
